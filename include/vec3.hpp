@@ -41,9 +41,6 @@ public:
     double length_squared() const{
         return e[0]*e[0]+e[1]*e[1] + e[2]*e[2];
     }
-    std::ostream& operator<<(std::ostream &out) const{
-        return out <<"{x="<<e[0]<<", y="<<e[1]<<", z="<<e[2]<<'}';
-    }
     Vec3 operator + (const Vec3& v) const{
         return Vec3(e[0]+v.e[0],e[1]+v.e[1],e[2]+v.e[2]);
     }
@@ -75,6 +72,9 @@ public:
     
 };
 
+inline std::ostream& operator<<(std::ostream &out, const Vec3& v){
+    return out <<"{x="<<v.e[0]<<", y="<<v.e[1]<<", z="<<v.e[2]<<'}';
+}
 inline Vec3 operator*(const double t, const Vec3& v){
     return v*t;
 }
