@@ -1,3 +1,0 @@
-/root/c++pract/raytracingprac/oneweekend/render/build/CMakeFiles/render.dir
-/root/c++pract/raytracingprac/oneweekend/render/build/CMakeFiles/edit_cache.dir
-/root/c++pract/raytracingprac/oneweekend/render/build/CMakeFiles/rebuild_cache.dir
