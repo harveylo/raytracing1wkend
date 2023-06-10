@@ -1,0 +1,1 @@
+/usr/bin/c++  -Wall -Werror CMakeFiles/render.dir/src/main.cpp.o -o render 
