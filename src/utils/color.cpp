@@ -1,4 +1,5 @@
 #include "color.hpp"
+#include "sphere.hpp"
 
 
 void write_color(std::ostream &out, Color pixel_color){
@@ -10,6 +11,9 @@ void write_color(std::ostream &out, Color pixel_color){
 
 Color ray_color(const Ray& r) {
     // Get the unit direction vector of the ray
+    if(hit_sphere(Point3(0,0,-1),0.5,r)){
+        return Color(1,0,0);
+    }
     Vec3 unit_direction = Vec3::unit_vector(r.direction());
     // Select t according to the y coordinate of the unit direction vector
     auto t = 0.5*(unit_direction.y() + 1.0);
