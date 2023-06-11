@@ -1,6 +1,9 @@
 #include "color.hpp"
 #include "vec3.hpp"
 #include "ray.hpp"
+#include "util.hpp"
+#include "hittable_list.hpp"
+#include "sphere.hpp"
 #include <iostream>
 
 int main(int argc, char const *argv[])
@@ -9,6 +12,11 @@ int main(int argc, char const *argv[])
     const auto aspect_ratio = 16.0/9.0;
     const int image_width = 1080;
     const int image_height = static_cast<int>(image_width/aspect_ratio);
+
+    // World
+    HittableList world;
+    world.add(std::make_shared<Sphere>(Point3(0,0,-1),0.5));
+    world.add(std::make_shared<Sphere>(Point3(0,-100.5,-1),100));
 
 
     //Camera info
@@ -22,7 +30,6 @@ int main(int argc, char const *argv[])
     auto horizontal = Vec3(viewport_width, 0, 0);
     auto vertical = Vec3(0, viewport_height, 0);
     auto lower_left_corner = origin - horizontal/2 - vertical/2 - Vec3(0,0,focal_length);
-    std::cerr<<lower_left_corner<<std::endl;
 
 
     // Render
@@ -33,7 +40,7 @@ int main(int argc, char const *argv[])
             auto u = (double) j / (image_width-1);
             auto v = (double) i / (image_height-1);
             Ray r(origin, lower_left_corner + u*horizontal + v*vertical - origin);
-            Color pixel_color = ray_color(r);
+            Color pixel_color = ray_color(r, world);
             write_color(std::cout, pixel_color);
         }
     }
