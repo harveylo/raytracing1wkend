@@ -11,7 +11,7 @@ void write_color(std::ostream &out, Color pixel_color){
 
 Color ray_color(const Ray& r) {
     // Get the unit direction vector of the ray
-    if(hit_sphere(Point3(0,0,-1),0.5,r)){
+    if(hit_sphere(Point3(-1,0,-1),0.5,r)){
         return Color(1,0,0);
     }
     Vec3 unit_direction = Vec3::unit_vector(r.direction());
