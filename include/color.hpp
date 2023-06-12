@@ -6,7 +6,8 @@
 #include "hittable_list.hpp"
 #include <iostream>
 
-void write_color(std::ostream &out, Color pixel_color);
+void write_color(std::ostream &out, Color pixel_color, int samples_per_pixel);
+// void write_color(std::ostream &out, Color pixel_color);
 Color ray_color(const Ray& r, const HittableList& world);
 
 #endif

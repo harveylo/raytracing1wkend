@@ -4,6 +4,7 @@
 #include "util.hpp"
 #include "hittable_list.hpp"
 #include "sphere.hpp"
+#include "camera.hpp"
 #include <iostream>
 
 int main(int argc, char const *argv[])
@@ -12,6 +13,8 @@ int main(int argc, char const *argv[])
     const auto aspect_ratio = 16.0/9.0;
     const int image_width = 1080;
     const int image_height = static_cast<int>(image_width/aspect_ratio);
+    // How many samples for every pixel
+    const int samples_per_pixel = 100;
 
     // World
     HittableList world;
@@ -20,29 +23,20 @@ int main(int argc, char const *argv[])
 
 
     //Camera info
-    auto viewport_height = 2.0;
-    auto viewport_width = aspect_ratio * viewport_height;
-    auto focal_length = 1.0;
-
-    //origin point of the coordinate system
-    auto origin = Point3(0,0,0);
-    //horizontal and vertical vectors
-    auto horizontal = Vec3(viewport_width, 0, 0);
-    auto vertical = Vec3(0, viewport_height, 0);
-    auto lower_left_corner = origin - horizontal/2 - vertical/2 - Vec3(0,0,focal_length);
-
+    Camera cam;
 
     // Render
     std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
     for(int i = image_height-1;i>=0;i--){
         std::cerr << "\rScanlines remaining: \e[44m" << i << "\e[0m " << std::flush;
         for(int j = 0;j<image_width;j++){
-            auto u = (double) j / (image_width-1);
-            auto v = (double) i / (image_height-1);
-            // Render this pixel with the first hit point of the ray.
-            Ray r(origin, lower_left_corner + u*horizontal + v*vertical - origin);
-            Color pixel_color = ray_color(r, world);
-            write_color(std::cout, pixel_color);
+            Color pixel_color(0,0,0);
+            for(int k = 0;k<samples_per_pixel;k++){
+                auto u = (((double)j+random_double())/(image_width-1));
+                auto v = (((double)i+random_double())/(image_height-1));
+                pixel_color += ray_color(cam.get_ray(u,v),world);
+            }
+            write_color(std::cout,pixel_color,samples_per_pixel);
         }
     }
 
