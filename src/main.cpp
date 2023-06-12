@@ -39,6 +39,7 @@ int main(int argc, char const *argv[])
         for(int j = 0;j<image_width;j++){
             auto u = (double) j / (image_width-1);
             auto v = (double) i / (image_height-1);
+            // Render this pixel with the first hit point of the ray.
             Ray r(origin, lower_left_corner + u*horizontal + v*vertical - origin);
             Color pixel_color = ray_color(r, world);
             write_color(std::cout, pixel_color);
