@@ -3,8 +3,7 @@
 
 #include<cmath>
 #include<iostream>
-
-using std::sqrt;
+#include "util.hpp"
 
 class Vec3{
 public:
@@ -36,7 +35,7 @@ public:
         return *this *= 1/t;
     }
     double length() const{
-        return sqrt(length_squared());
+        return std::sqrt(length_squared());
     }
     double length_squared() const{
         return e[0]*e[0]+e[1]*e[1] + e[2]*e[2];
@@ -68,6 +67,28 @@ public:
     }
     static Vec3 unit_vector(const Vec3& v){
         return v/v.length();
+    }
+
+    static Vec3 random(double min, double max){
+        return Vec3(random_double(min,max),random_double(min,max),random_double(min,max));
+    }
+
+    static Vec3 random_in_unit_sphere(){
+        while(true){
+            auto tem = random(-1.0,1.0);
+            if(tem.length_squared() <= 1) return tem;
+        }
+    }
+
+    static Vec3 random_unit_vector(){
+        return unit_vector(random_in_unit_sphere());
+    }
+
+    static Vec3 random_in_hemisphere(const Vec3& normal){
+        Vec3 in_unit_sphere = random_in_unit_sphere();
+        // In the top hemisphere
+        if(normal.dot(in_unit_sphere)>0.0) return in_unit_sphere;
+        else return -in_unit_sphere;
     }
     
 };

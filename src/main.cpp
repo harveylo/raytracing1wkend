@@ -11,10 +11,12 @@ int main(int argc, char const *argv[])
 {
     // Image info
     const auto aspect_ratio = 16.0/9.0;
-    const int image_width = 1080;
+    const int image_width = 720;
     const int image_height = static_cast<int>(image_width/aspect_ratio);
     // How many samples for every pixel
     const int samples_per_pixel = 100;
+    // How many times of reflection each ray can make
+    const int max_depth = 50;
 
     // World
     HittableList world;
@@ -34,7 +36,7 @@ int main(int argc, char const *argv[])
             for(int k = 0;k<samples_per_pixel;k++){
                 auto u = (((double)j+random_double())/(image_width-1));
                 auto v = (((double)i+random_double())/(image_height-1));
-                pixel_color += ray_color(cam.get_ray(u,v),world);
+                pixel_color += ray_color(cam.get_ray(u,v),world, max_depth);
             }
             write_color(std::cout,pixel_color,samples_per_pixel);
         }

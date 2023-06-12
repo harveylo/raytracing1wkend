@@ -19,5 +19,6 @@ bool Sphere::hit(const Ray& r, double t_min, double t_max, HitRecord& rec) const
     }
     rec.set_record(r.at(t), t);
     rec.set_face_normal(r, (rec.p-center)/radius);
+    rec.set_material(mat_ptr);
     return true;
 }

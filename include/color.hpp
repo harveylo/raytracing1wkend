@@ -7,7 +7,6 @@
 #include <iostream>
 
 void write_color(std::ostream &out, Color pixel_color, int samples_per_pixel);
-// void write_color(std::ostream &out, Color pixel_color);
-Color ray_color(const Ray& r, const HittableList& world);
+Color ray_color(const Ray& r, const HittableList& world, int depth);
 
 #endif
