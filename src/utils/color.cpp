@@ -1,6 +1,6 @@
 #include "color.hpp"
-#include "sphere.hpp"
 #include "util.hpp"
+#include "material.hpp"
 
 // desolation simple one-sample write_color function 
 // void write_color(std::ostream &out, Color pixel_color){
@@ -38,16 +38,12 @@ Color ray_color(const Ray& r, const HittableList& world, int depth) {
     if(depth <= 0) return Color(0,0,0);
     HitRecord rec;
     if(world.hit(r,0.001,INFIN_D,rec)){
-        // Calculated the random point inside the unit sphere, Three ways to diffuse
-        // Point3 target = rec.p+Vec3::random_in_hemisphere(rec.normal); //uniform distribution, hemisphere
-        // Point3 target = rec.p+ rec.normal + Vec3::random_in_unit_sphere(); // lazy hack, closer to normal
-        Point3 target = rec.p+ rec.normal + Vec3::random_unit_vector(); // Lambertian Reflection, closer to scatter the ray
-        
-
-        // Get the color of the child ray, but only has half weight.
-        // with every hit, the contribution will be decreased to a half
-        // At last, the color would be the color of the world or zero
-        return 0.5 * ray_color(Ray(rec.p,target - rec.p),world,depth-1);
+        //calculate child ray according to material
+        Color attenuation;
+        Ray scattered;
+        if((rec.mat_ptr)->scatter(r,rec,attenuation,scattered)) 
+            return attenuation*(ray_color(scattered,world,depth-1));
+        return Color(0,0,0); 
     }
     // Return the linear blend of white and blue
     Vec3 unit_direction = Vec3::unit_vector(r.direction());

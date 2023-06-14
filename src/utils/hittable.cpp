@@ -1,5 +1,5 @@
 #include "cmath"
-#include "sphere.hpp"
+#include "hittable.hpp"
 
 
 
@@ -18,6 +18,8 @@ bool Sphere::hit(const Ray& r, double t_min, double t_max, HitRecord& rec) const
         if(t>t_max || t<t_min) return false;
     }
     rec.set_record(r.at(t), t);
+    // Whether radius is negtive or positive does not affect the above calculation
+    // But if the radius is negtive the following calculation will lead to a reversed normal
     rec.set_face_normal(r, (rec.p-center)/radius);
     rec.set_material(mat_ptr);
     return true;
