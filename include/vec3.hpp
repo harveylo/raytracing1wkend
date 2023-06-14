@@ -88,6 +88,9 @@ public:
         return v/v.length();
     }
 
+    static Vec3 random() {
+        return Vec3(random_double(),random_double(),random_double());
+    }
     static Vec3 random(double min, double max) {
         return Vec3(random_double(min,max),random_double(min,max),random_double(min,max));
     }
