@@ -7,18 +7,27 @@
 #include <iostream>
 #include "material.hpp"
 #include <memory>
+#include <vector>
+#include <semaphore>
+#include <thread>
 
 
 int main(int argc, char const *argv[])
 {
+    // Initialize random seed
+    srand(time(NULL));
+
+
     // Image info
     const auto aspect_ratio = 16.0/9.0;
-    const int image_width = 720;
+    const int image_width = 800;
     const int image_height = static_cast<int>(image_width/aspect_ratio);
     // How many samples for every pixel
     const int samples_per_pixel = 100;
     // How many times of reflection each ray can make
     const int max_depth = 50;
+    std::vector<std::vector<std::vector<int>>> image(image_height,std::vector<std::vector<int>>(image_width,std::vector<int>(3,0)));
+    
 
     // World
     auto world = random_scene();
@@ -32,20 +41,30 @@ int main(int argc, char const *argv[])
     Camera cam(lookfrom,lookat,vup,20, aspect_ratio,aperture,dist_to_focus);
 
     // Render
-    std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
+    std::counting_semaphore<BATCH> sem(BATCH);
     for(int i = image_height-1;i>=0;i--){
-        std::cerr << "\rScanlines remaining: \e[44m" << i << "\e[0m " << std::flush;
-        for(int j = 0;j<image_width;j++){
-            Color pixel_color(0,0,0);
-            for(int k = 0;k<samples_per_pixel;k++){
-                auto u = (((double)j+random_double())/(image_width-1));
-                auto v = (((double)i+random_double())/(image_height-1));
-                pixel_color += ray_color(cam.get_ray(u,v),world, max_depth);
-            }
-            write_color(std::cout,pixel_color,samples_per_pixel);
-        }
+        sem.acquire();
+        std::thread(scanline_render,i,std::ref(cam),std::ref(world),image_width,image_height,samples_per_pixel,max_depth,std::ref(image),std::ref(sem)).detach();
+        std::cerr << "\rScanline: \e[44m" << i << "\e[0m " <<"submitted"<< std::flush;
     }
 
+    // Output image
+    std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
+    for(int i = image_height-1;i>=BATCH;i--){
+        for(int j = 0;j<image_width;j++){
+            std::cout << image[i][j][0] << ' ' << image[i][j][1] << ' ' << image[i][j][2] << '\n';
+        }
+    }
+    int count = 0;
+    while(count<BATCH){
+        sem.acquire();
+        count++;
+    }
+    for(int i = BATCH-1;i>=0;i--){
+        for(int j = 0;j<image_width;j++){
+            std::cout << image[i][j][0] << ' ' << image[i][j][1] << ' ' << image[i][j][2] << '\n';
+        }
+    }
     std::cerr << "\n\e[42m Done.\e[0m\n";
     return 0;
 }
