@@ -10,7 +10,7 @@ bool Lambertian::scatter(const Ray& ray_in, const HitRecord& rec, Color& attenua
         Vec3 direction = rec.normal + Vec3::random_unit_vector(); // Lambertian Reflection, closer to scatter the ray
         if(direction.near_zero()) direction = rec.normal;
 
-        scattered = Ray(rec.p,direction);
+        scattered = Ray(rec.p,direction,ray_in.time);
         attenuation = albedo;
         return true;
 }
@@ -20,7 +20,7 @@ bool Metal::scatter(const Ray& ray_in, const HitRecord& rec, Color& attenuation,
     
     if(direction.near_zero()) direction = rec.normal;
 
-    scattered = Ray(rec.p, direction);
+    scattered = Ray(rec.p, direction, ray_in.time);
     attenuation = albedo;
     return true;
 }
@@ -43,7 +43,7 @@ bool Dielectric::scatter(const Ray& ray_in, const HitRecord& rec, Color& attenua
         scattered = Ray(rec.p,unit_direction.reflect(rec.normal));
     }else {
         Vec3 frac_diretion = unit_direction.refract(rec.normal,refraction_ratio);
-        scattered = Ray(rec.p,frac_diretion);
+        scattered = Ray(rec.p,frac_diretion, ray_in.time);
     }
 
     return true;

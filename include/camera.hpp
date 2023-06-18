@@ -13,6 +13,9 @@ private:
     Vec3 vertical;
     Vec3 u,v,w;
     double lens_radius;
+    double optime, cltime;  // Shutter open/close times
+
+
 public:
     // Default(No Arguments) constructor will construct a camera at world origin, looking at -z
     Camera();
@@ -24,12 +27,14 @@ public:
     // lookat is just for dscribing the direction with lookfrom, focus_dist specify the focus distance
     // Though we can use lookat and lookfrom for both the dicrection and the focus distance, but the flexibility will be impaired
     Camera(Point3 lookfrom, Point3 lookat, Vec3 vup, double vfov, double  aspect_ratio, double aperture, double focus_dist);
+    Camera(Point3 lookfrom, Point3 lookat, Vec3 vup, double vfov, double  aspect_ratio, double aperture, double focus_dist, double optime, double cltime);
     Ray get_ray(double s, double t) const{
         // Get a vector in disk
         Vec3 rd = lens_radius * Vec3::random_in_unit_disk();
         // compose each vector projection on u and v to form the fianl ray starting point
         Vec3 offset = u*rd.x()+v*rd.y();
-        return Ray(origin+offset,lower_left_corner+s*horizontal+t*vertical-origin-offset);
+        double cur_time = random_double(optime,cltime);
+        return Ray(origin+offset,lower_left_corner+s*horizontal+t*vertical-origin-offset,cur_time);
     }
 };
 

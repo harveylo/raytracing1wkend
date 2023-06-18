@@ -20,10 +20,10 @@ int main(int argc, char const *argv[])
 
     // Image info
     const auto aspect_ratio = 16.0/9.0;
-    const int image_width = 800;
+    const int image_width = 720;
     const int image_height = static_cast<int>(image_width/aspect_ratio);
     // How many samples for every pixel
-    const int samples_per_pixel = 100;
+    const int samples_per_pixel = 1000;
     // How many times of reflection each ray can make
     const int max_depth = 50;
     std::vector<std::vector<std::vector<int>>> image(image_height,std::vector<std::vector<int>>(image_width,std::vector<int>(3,0)));
@@ -38,7 +38,7 @@ int main(int argc, char const *argv[])
     Vec3 vup(0,1,0);
     auto dist_to_focus = 10;
     auto aperture = 0.1;
-    Camera cam(lookfrom,lookat,vup,20, aspect_ratio,aperture,dist_to_focus);
+    Camera cam(lookfrom,lookat,vup,20, aspect_ratio,aperture,dist_to_focus,0,1);
 
     // Render
     std::counting_semaphore<BATCH> sem(BATCH);

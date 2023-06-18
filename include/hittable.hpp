@@ -45,4 +45,21 @@ public:
     virtual bool hit(const Ray& r, double t_min, double t_max, HitRecord& rec) const override;
 };
 
+
+class MovingSphere: public Hittable{
+public:
+    Point3 scenter, ecenter;
+    double radius;
+    std::shared_ptr<Material> mat_ptr;
+    double stime, etime;
+
+    MovingSphere(){}
+    MovingSphere(Point3 scenter, Point3 ecenter,double radius, std::shared_ptr<Material> mat_ptr, double stime, double etime):scenter(scenter),ecenter(ecenter),radius(radius),mat_ptr(mat_ptr),stime(stime),etime(etime){}
+    virtual bool hit(const Ray& r, double t_min, double t_max, HitRecord& rec) const override;
+
+    Point3 center(double time) const{
+        return scenter + ((time - stime)/(etime-stime)*(ecenter - scenter));
+    }
+};
+
 #endif

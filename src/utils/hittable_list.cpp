@@ -36,6 +36,9 @@ HittableList random_scene(){
                     // Diffuse, 70 percent probability
                     auto albedo = Vec3::random()*Vec3::random();
                     sphere_material = std::make_shared<Lambertian>(albedo);
+                    auto center2 = center+Vec3(0,random_double(0,0.5),0);
+                    world.add(std::make_shared<MovingSphere>(center,center2,0.2,sphere_material,0,1));
+                    continue;
                 }else if(choose_mat<0.85){
                     // Metal, 15 percent probability
                     auto albedo = Vec3::random(0.5,1);
