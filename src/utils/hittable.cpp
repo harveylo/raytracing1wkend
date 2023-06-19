@@ -26,6 +26,14 @@ bool Sphere::hit(const Ray& r, double t_min, double t_max, HitRecord& rec) const
 }
 
 
+bool Sphere::bounding_box(double time0, double time1, AABB& output_box) const{
+    output_box = AABB(
+        center - Vec3(radius,radius,radius),
+        center + Vec3(radius,radius,radius)
+    );
+    return true;
+}
+
 bool MovingSphere::hit(const Ray& r, double t_min, double t_max, HitRecord& rec) const{
     double cur_time = r.time;
     Point3 cur_center = this->center(cur_time);
@@ -47,5 +55,22 @@ bool MovingSphere::hit(const Ray& r, double t_min, double t_max, HitRecord& rec)
     // But if the radius is negtive the following calculation will lead to a reversed normal
     rec.set_face_normal(r, (rec.p-cur_center)/radius);
     rec.set_material(mat_ptr);
+    return true;
+}
+
+
+bool MovingSphere::bounding_box(double time0, double time1, AABB& output_box) const{
+    Point3 pre = center(time0);
+    Point3 post = center(time1);
+
+    AABB a(
+        pre - Vec3(radius,radius,radius),
+        pre + Vec3(radius,radius,radius)
+    );
+    AABB b(
+        post - Vec3(radius,radius,radius),
+        post + Vec3(radius, radius,radius)
+    );
+    output_box=AABB::surrounding_box(a,b);
     return true;
 }
