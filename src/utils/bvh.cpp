@@ -53,8 +53,8 @@ BVHNode::BVHNode(const std::vector<std::shared_ptr<Hittable>> &src_objects,
         std::sort(objects.begin()+start, objects.begin()+end, comparator);
         
         auto mid = start + (size>>1);
-        left = std::make_shared<Hittable>(BVHNode(src_objects,start,mid,time0,time1));
-        right = std::make_shared<Hittable>(BVHNode(src_objects,mid,end,time0,time1));
+        left = std::make_shared<BVHNode>(src_objects,start,mid,time0,time1);
+        right = std::make_shared<BVHNode>(src_objects,mid,end,time0,time1);
     }
 
     AABB box_left, box_right;

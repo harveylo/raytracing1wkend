@@ -11,4 +11,4 @@ add_executable(render ${SRCS})
 set_property(TARGET render PROPERTY CXX_STANDARD 20)
 
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror -O3 -Wno-non-virtual-dtor")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-non-virtual-dtor -Wall  -O3")
