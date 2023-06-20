@@ -1,6 +1,7 @@
 #include "hittable_list.hpp"
 #include <memory>
 #include "material.hpp"
+#include "texture.hpp"
 #include "util.hpp"
 
 bool HittableList::hit(const Ray& r, double t_min, double t_max, HitRecord& rec) const{
@@ -21,7 +22,7 @@ bool HittableList::hit(const Ray& r, double t_min, double t_max, HitRecord& rec)
 HittableList random_scene(){
     HittableList world;
 
-    auto ground_material = std::make_shared<Lambertian>(Color(0.5,0.5,0.5));
+    auto ground_material = std::make_shared<Lambertian>(std::make_shared<CheckerTexture>(CheckerTexture(Color(0.2,0.3,0.1),Color(0.9,0.9,0.9))));
     world.add(std::make_shared<Sphere>(Point3(0,-1000,0),1000,ground_material));
 
     for(int i = -11; i<11;i++){
@@ -64,4 +65,20 @@ HittableList random_scene(){
     world.add(std::make_shared<Sphere>(Point3(4,1,0),1.0,material3));
 
     return world;
+}
+
+
+bool HittableList::bounding_box(double time0, double time1, AABB& output_box) const{
+    if(objects.empty()) return false;
+    
+    AABB temp;
+    bool first_box = true;
+
+    for(const auto& object : objects){
+        if(!object -> bounding_box(time0,time1,temp)) return false;
+        output_box = first_box? temp : AABB::surrounding_box(output_box, temp);
+        first_box = false;
+    }
+
+    return true;
 }

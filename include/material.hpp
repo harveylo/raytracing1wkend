@@ -5,6 +5,8 @@
 #include "ray.hpp"
 #include "vec3.hpp"
 #include "hittable.hpp"
+#include "texture.hpp"
+#include <memory>
 
 class Material{
 public:
@@ -14,9 +16,12 @@ public:
 
 class Lambertian : public Material{
 public:
+    std::shared_ptr<Texture> albedo;
+
+
     // The fraction of sunlight that is fiffusely reflected by the body 
-    Color  albedo;
-    Lambertian(const Color& a): albedo(a){};
+    Lambertian(const Color& a): albedo(std::make_shared<SolidColor>(a)){};
+    Lambertian(std::shared_ptr<Texture> a): albedo(a){}
     virtual bool scatter(const Ray& ray_in, const HitRecord& rec, Color& attenuation, Ray& scattered) const override;
     
 };

@@ -14,6 +14,7 @@ public:
     double x() const {return e[0];}
     double y() const {return e[1];}
     double z() const {return e[2];}
+
     
     Vec3 operator-() const {return Vec3(-e[0],-e[1],-e[2]);}
     const double& operator[](int i) const {return e[i];}
@@ -37,7 +38,7 @@ public:
     }
     bool near_zero(){
         const auto s = 1e-8;
-        return ((fabs(e[0])<s)&&(fabs(e[1])<s)&&(fabs(e[2]<s)));
+        return ((fabs(e[0])<s)&&(fabs(e[1])<s)&&(fabs(e[2])<s));
     }
     double length() const{
         return std::sqrt(length_squared());

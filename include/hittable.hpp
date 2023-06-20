@@ -14,6 +14,10 @@ struct HitRecord {
     double t;
     bool front_face;
     std::shared_ptr<Material> mat_ptr;
+    double u;
+    double v;
+
+
     HitRecord():p(),normal(),t(),front_face(){}
     HitRecord(const Point3& p, const Vec3& normal, double t):p(p),normal(normal),t(t){}
     void set_record(const Point3& p, double t){
@@ -46,6 +50,7 @@ public:
     Sphere(Point3 cen, double r, std::shared_ptr<Material> m):center(cen),radius(r),mat_ptr(m){}
     virtual bool hit(const Ray& r, double t_min, double t_max, HitRecord& rec) const override;
     virtual bool bounding_box(double time0, double time1, AABB& output_box) const override;
+    static void get_sphere_uv(const Point3& p, double& u, double& v);
 };
 
 

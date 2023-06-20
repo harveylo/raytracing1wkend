@@ -1,5 +1,7 @@
 #include "cmath"
 #include "hittable.hpp"
+#include "util.hpp"
+#include <math.h>
 
 
 
@@ -18,9 +20,11 @@ bool Sphere::hit(const Ray& r, double t_min, double t_max, HitRecord& rec) const
         if(t>t_max || t<t_min) return false;
     }
     rec.set_record(r.at(t), t);
+    auto outward_normal = (rec.p-center)/radius;
     // Whether radius is negtive or positive does not affect the above calculation
     // But if the radius is negtive the following calculation will lead to a reversed normal
     rec.set_face_normal(r, (rec.p-center)/radius);
+    get_sphere_uv(outward_normal, rec.u, rec.v);
     rec.set_material(mat_ptr);
     return true;
 }
@@ -33,6 +37,24 @@ bool Sphere::bounding_box(double time0, double time1, AABB& output_box) const{
     );
     return true;
 }
+
+
+void Sphere::get_sphere_uv(const Point3& p, double& u, double& v){
+    // p is the point on the unit sphere
+    // u: returned value [0,1] of angle around the Y axis from X=-1.
+    // v: returned value [0,1] of angle from Y=-1 to Y=+1.
+    //     <1 0 0> yields <0.50 0.50>       <-1  0  0> yields <0.00 0.50>
+    //     <0 1 0> yields <0.50 1.00>       < 0 -1  0> yields <0.50 0.00>
+    //     <0 0 1> yields <0.25 0.50>       < 0  0 -1> yields <0.75 0.50>
+
+
+    auto theta = atan2(p.z(), -p.x()) + PI;
+    auto phi = acos(-p.y());
+
+    u = phi/(2*PI);
+    v = theta/PI;
+}
+
 
 bool MovingSphere::hit(const Ray& r, double t_min, double t_max, HitRecord& rec) const{
     double cur_time = r.time;
