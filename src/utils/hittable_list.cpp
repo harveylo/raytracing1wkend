@@ -94,3 +94,15 @@ HittableList two_spheres(){
     objects.add(std::make_shared<Sphere>(Point3(0,10,0),10,std::make_shared<Lambertian>(checker)));
     return objects;
 }
+
+
+HittableList two_perlin_spheres(){
+    HittableList objects;
+
+    auto pertext = std::make_shared<NoiseTexture>();
+
+    objects.add(std::make_shared<Sphere>(Point3(0,-1000,0),1000,std::make_shared<Lambertian>(pertext)));
+    objects.add(std::make_shared<Sphere>(Point3(0,2,0),2,std::make_shared<Lambertian>(pertext)));
+
+    return objects;
+}

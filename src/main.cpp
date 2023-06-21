@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
 
     // Handle cmdline arguments
     cmdline::parser p;
-    p.add<int>("scene", 's', "scene to render", false,0,cmdline::oneof<int>(0,1));
+    p.add<int>("scene", 's', "scene to render", false,0,cmdline::oneof<int>(0,1,2));
     p.add<int>("sample_times", 't',"the time of sampling", false,100);
     p.add<int>("width",'w',"width of the output image", false,720);
     p.parse_check(argc,argv);
@@ -93,6 +93,12 @@ void scene_init(int scene, BVHNode& world, Camera& cam, const double aspect_rati
             break;
         case 1:
             world = BVHNode(two_spheres(),0,1);
+            lookfrom = Point3(13,2,3);
+            lookat = Point3(0,0,0);
+            vfov = 20.0;
+            break;
+        case 2:
+            world = BVHNode(two_perlin_spheres(),0,1);
             lookfrom = Point3(13,2,3);
             lookat = Point3(0,0,0);
             vfov = 20.0;

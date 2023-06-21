@@ -25,7 +25,10 @@ public:
     virtual ~HittableList() = default;
 };
 
+
+// scenes
 HittableList random_scene();
 HittableList two_spheres();
+HittableList two_perlin_spheres();
 
 #endif
