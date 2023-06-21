@@ -8,6 +8,7 @@
 class Texture{
 public:
     virtual Color value(double u, double v, const Point3& p) const = 0;
+    virtual ~Texture() = default;
 };
 
 class SolidColor : public Texture {
@@ -22,6 +23,7 @@ public:
     virtual Color value(double u, double v, const Point3& p) const override{
         return color_value;
     }
+    virtual ~SolidColor() = default;
 };
 
 class CheckerTexture: public Texture{
@@ -34,6 +36,7 @@ public:
     CheckerTexture(Color even, Color odd):odd (std::make_shared<SolidColor>(odd)), even(std::make_shared<SolidColor>(even)){}
 
     virtual Color value(double u, double v, const Point3& p) const override;
+    virtual ~CheckerTexture() = default;
 };
 
 #endif

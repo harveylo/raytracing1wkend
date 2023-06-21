@@ -25,6 +25,7 @@ public:
 
     virtual bool hit(const Ray &r, double t_min, double t_max, HitRecord &rec) const override;
     virtual bool bounding_box(double time0, double time1, AABB &output_box) const override;
+    virtual ~BVHNode() = default;
 
     
 };
@@ -34,7 +35,7 @@ inline bool box_compare(const std::shared_ptr<Hittable> a, const std::shared_ptr
     AABB box_b;
 
     // Comparition is not time-sensitive, it's just used to distinguish two objects with certain order
-    if(!a->bounding_box(0,0,box_a) || !b->bounding_box(0, 0, box_a))
+    if(!a->bounding_box(0,0,box_a) || !b->bounding_box(0, 0, box_b))
         std::cerr<< "\e[1;31mNo bounding box in BVHNode constructor [in comparator].\e[0m\n";
     
     return box_a.min()[axis] < box_b.min()[axis];

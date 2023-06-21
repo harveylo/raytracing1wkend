@@ -37,6 +37,7 @@ class Hittable {
 public:
     virtual bool hit(const Ray& r, double t_min, double t_max, HitRecord& rec) const = 0;
     virtual bool bounding_box(double time0, double time1, AABB& output_box) const = 0;
+    virtual ~Hittable() = default;
 };
 
 class Sphere: public Hittable{
@@ -50,6 +51,7 @@ public:
     Sphere(Point3 cen, double r, std::shared_ptr<Material> m):center(cen),radius(r),mat_ptr(m){}
     virtual bool hit(const Ray& r, double t_min, double t_max, HitRecord& rec) const override;
     virtual bool bounding_box(double time0, double time1, AABB& output_box) const override;
+    virtual ~Sphere() = default;
     static void get_sphere_uv(const Point3& p, double& u, double& v);
 };
 
@@ -65,6 +67,7 @@ public:
     MovingSphere(Point3 scenter, Point3 ecenter,double radius, std::shared_ptr<Material> mat_ptr, double stime, double etime):scenter(scenter),ecenter(ecenter),radius(radius),mat_ptr(mat_ptr),stime(stime),etime(etime){}
     virtual bool hit(const Ray& r, double t_min, double t_max, HitRecord& rec) const override;
     virtual bool bounding_box(double time0, double time1, AABB& output_box) const override;
+    virtual ~MovingSphere() = default;
 
     Point3 center(double time) const{
         return scenter + ((time - stime)/(etime-stime)*(ecenter - scenter));

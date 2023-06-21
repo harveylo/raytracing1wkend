@@ -12,6 +12,7 @@ class Material{
 public:
     //pure virtual funciton
     virtual bool scatter(const Ray& ray_in, const HitRecord& rec, Color& attenuation, Ray& scattered) const = 0;
+    virtual ~Material() = default;
 };
 
 class Lambertian : public Material{
@@ -23,6 +24,7 @@ public:
     Lambertian(const Color& a): albedo(std::make_shared<SolidColor>(a)){};
     Lambertian(std::shared_ptr<Texture> a): albedo(a){}
     virtual bool scatter(const Ray& ray_in, const HitRecord& rec, Color& attenuation, Ray& scattered) const override;
+    virtual ~Lambertian() = default;
     
 };
 
@@ -34,6 +36,7 @@ public:
     Metal(const Color& a): albedo(a),fuzz(0){};
     Metal(const Color&a, double f): albedo(a),fuzz(f){};
     virtual bool scatter(const Ray& ray_in, const HitRecord& rec, Color& attenuation, Ray& scattered) const override;
+    virtual ~Metal() = default;
 };
 
 class Dielectric: public Material{
@@ -42,6 +45,7 @@ public:
 
     Dielectric(double ir):ir(ir){}
     virtual bool scatter(const Ray& ray_in, const HitRecord& rec, Color& attenuation, Ray& scattered) const override;
+    virtual ~Dielectric() = default;
 private:
     static double reflectance(double cosine, double ref_idx);
 };

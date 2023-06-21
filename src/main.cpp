@@ -1,3 +1,4 @@
+#include "bvh.hpp"
 #include "color.hpp"
 #include "vec3.hpp"
 #include "ray.hpp"
@@ -31,6 +32,7 @@ int main(int argc, char const *argv[])
 
     // World
     auto world = random_scene();
+    auto world_node = BVHNode(world,0,1);
 
     //Camera info
     Point3 lookfrom(13,2,3);
@@ -44,7 +46,7 @@ int main(int argc, char const *argv[])
     std::counting_semaphore<BATCH> sem(BATCH);
     for(int i = image_height-1;i>=0;i--){
         sem.acquire();
-        std::thread(scanline_render,i,std::ref(cam),std::ref(world),image_width,image_height,samples_per_pixel,max_depth,std::ref(image),std::ref(sem)).detach();
+        std::thread(scanline_render,i,std::ref(cam),std::ref(world_node),image_width,image_height,samples_per_pixel,max_depth,std::ref(image),std::ref(sem)).detach();
         std::cerr << "\rScanline: \e[44m" << i << "\e[0m " <<"submitted"<< std::flush;
     }
 

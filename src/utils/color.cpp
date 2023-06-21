@@ -1,4 +1,5 @@
 #include "color.hpp"
+#include "bvh.hpp"
 #include "util.hpp"
 #include "material.hpp"
 #include "camera.hpp"
@@ -34,7 +35,7 @@ void write_color(std::ostream &out, Color pixel_color, int samples_per_pixel){
         << static_cast<int>(256 * clamp(b, 0.0, 0.999)) << '\n';
 }
 
-Color ray_color(const Ray& r, const HittableList& world, int depth) {
+Color ray_color(const Ray& r, const BVHNode& world, int depth) {
     // If already reached the maximum depth, return no contribution color.
     if(depth <= 0) return Color(0,0,0);
     HitRecord rec;
@@ -54,7 +55,7 @@ Color ray_color(const Ray& r, const HittableList& world, int depth) {
 
 void scanline_render(const int line,
                      const Camera& cam,
-                     const HittableList& world,
+                     const BVHNode& world,
                      const int image_width,
                      const int image_height,
                      const int samples_per_pixel,

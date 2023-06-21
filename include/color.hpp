@@ -1,6 +1,7 @@
 #ifndef __COLOR_H__
 #define __COLOR_H__
 
+#include "bvh.hpp"
 #include "vec3.hpp"
 #include "ray.hpp"
 #include "hittable_list.hpp"
@@ -14,7 +15,7 @@ Color ray_color(const Ray& r, const HittableList& world, int depth);
 
 void scanline_render(const int line,
                      const Camera& cam,
-                     const HittableList& world,
+                     const BVHNode& world,
                      const int image_width,
                      const int image_height,
                      const int samples_per_pixel,
