@@ -1,7 +1,6 @@
 # Simple Ray Tracing Renderer
-This project is based on the book [Ray Tracing in One Weekend](https://raytracing.github.io/books/RayTracingInOneWeekend.html).
+This project is based on the [book series](https://raytracing.github.io/).
 
-All code are copied/modified from the book. And I arranged them in a way that looks better as a compliable project.
-
-# Multi-thread support
-Modify the BATCH constant variable in `util.hpp` according to the number of your physical cores
+All code has been copied and/or modified from the book. I have arranged it in a way that makes it more readable as a complete project.
+# Multi-threads support
+To configure the project, please modify the BATCH constant variable in util.hpp according to the number of physical cores on your machine.
