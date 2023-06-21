@@ -26,5 +26,6 @@ public:
 };
 
 HittableList random_scene();
+HittableList two_spheres();
 
 #endif

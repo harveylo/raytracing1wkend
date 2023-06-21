@@ -1,8 +1,10 @@
 #include "hittable_list.hpp"
 #include <memory>
+#include "hittable.hpp"
 #include "material.hpp"
 #include "texture.hpp"
 #include "util.hpp"
+#include "vec3.hpp"
 
 bool HittableList::hit(const Ray& r, double t_min, double t_max, HitRecord& rec) const{
     HitRecord temp_rec;
@@ -17,6 +19,23 @@ bool HittableList::hit(const Ray& r, double t_min, double t_max, HitRecord& rec)
         }
     }
     return hit_anything;
+}
+
+
+
+bool HittableList::bounding_box(double time0, double time1, AABB& output_box) const{
+    if(objects.empty()) return false;
+    
+    AABB temp;
+    bool first_box = true;
+
+    for(const auto& object : objects){
+        if(!object -> bounding_box(time0,time1,temp)) return false;
+        output_box = first_box? temp : AABB::surrounding_box(output_box, temp);
+        first_box = false;
+    }
+
+    return true;
 }
 
 HittableList random_scene(){
@@ -67,18 +86,11 @@ HittableList random_scene(){
     return world;
 }
 
+HittableList two_spheres(){
+    HittableList objects;
+    auto checker = std::make_shared<CheckerTexture>(Color(0.2,0.3,0.1),Color(0.9,0.9,0.9));
 
-bool HittableList::bounding_box(double time0, double time1, AABB& output_box) const{
-    if(objects.empty()) return false;
-    
-    AABB temp;
-    bool first_box = true;
-
-    for(const auto& object : objects){
-        if(!object -> bounding_box(time0,time1,temp)) return false;
-        output_box = first_box? temp : AABB::surrounding_box(output_box, temp);
-        first_box = false;
-    }
-
-    return true;
+    objects.add(std::make_shared<Sphere>(Point3(0,-10,0),10,std::make_shared<Lambertian>(checker)));
+    objects.add(std::make_shared<Sphere>(Point3(0,10,0),10,std::make_shared<Lambertian>(checker)));
+    return objects;
 }
