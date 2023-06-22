@@ -42,15 +42,7 @@ public:
         delete [] perm_y;
         delete [] perm_z;
     }
-    double noise(const Point3& p) const{
-        auto i = static_cast<int>(4*p.x()) & 255;
-        auto j = static_cast<int>(4*p.y()) & 255;
-        auto k = static_cast<int>(4*p.z()) & 255;
-
-        // use the random int array to generate an random float index
-        return ranfloat[perm_x[i] ^ perm_y[j] ^ perm_z[k]];
-
-    }
+    double noise(const Point3& p) const;
 };
 
 #endif

@@ -43,6 +43,7 @@ public:
 class NoiseTexture: public Texture{
 public:
     Perlin noise;
+    double scale;
 
     NoiseTexture(){}
 
