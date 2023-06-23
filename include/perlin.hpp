@@ -8,7 +8,7 @@ class Perlin{
 private:
     static constexpr int point_count = 256;
     // ! Why using heap memory(pointer), not stack?
-    double* ranfloat;
+    Vec3* ranvec;
     int* perm_x;
     int* perm_y;
     int* perm_z;
@@ -37,12 +37,14 @@ public:
     // Perlin constructor will initialize the four random  arrays
     Perlin();
     ~Perlin(){
-        delete[] ranfloat;
+        delete[] ranvec;
         delete [] perm_x;
         delete [] perm_y;
         delete [] perm_z;
     }
     double noise(const Point3& p) const;
+
+    double turb(const Point3& p, int depth=7) const;
 };
 
 #endif

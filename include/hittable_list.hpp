@@ -30,5 +30,6 @@ public:
 HittableList random_scene();
 HittableList two_spheres();
 HittableList two_perlin_spheres();
+HittableList earth();
 
 #endif

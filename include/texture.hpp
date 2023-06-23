@@ -5,6 +5,7 @@
 #include "util.hpp"
 #include "vec3.hpp"
 #include <memory>
+#include "3rdparty/stb_image.hpp"
 
 class Texture{
 public:
@@ -45,13 +46,35 @@ public:
     Perlin noise;
     double scale;
 
-    NoiseTexture(){}
+    NoiseTexture(): scale(1){}
+    NoiseTexture(double scale):scale(scale) {}
 
     virtual Color value(double u, double v, const Point3& p) const override{
-        return Color(1,1,1) * noise.noise(p);
+        return Color(1,1,1) * 0.5 * (1 + sin(scale *p.z() + 10*noise.turb(p)));
     }
 
     virtual ~NoiseTexture() = default;
+};
+
+
+class ImageTexture : public Texture{
+private:
+    unsigned char* data;
+    int width, height;
+    int bytes_per_scanline;
+
+public:
+    const static int bytes_per_pixel = 3;
+
+    ImageTexture(): data(nullptr), width(0), height(0), bytes_per_scanline(0){}
+    ImageTexture (const char* filename);
+
+    ~ImageTexture(){
+        if(data != nullptr)stbi_image_free(data);
+    }
+
+    virtual Color value(double u, double v, const Vec3& p) const override;
+
 };
 
 

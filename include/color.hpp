@@ -21,5 +21,5 @@ void scanline_render(const int line,
                      const int samples_per_pixel,
                      const int max_depth,
                      std::vector<std::vector<std::vector<int>>>& image,
-                     std::counting_semaphore<BATCH>& sem);
+                     std::counting_semaphore<1000>& sem);
 #endif

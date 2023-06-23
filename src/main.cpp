@@ -24,10 +24,13 @@ int main(int argc, char *argv[])
 
     // Handle cmdline arguments
     cmdline::parser p;
-    p.add<int>("scene", 's', "scene to render", false,0,cmdline::oneof<int>(0,1,2));
+    p.add<int>("scene", 's', "scene to render", false,0,cmdline::oneof<int>(0,1,2,3));
     p.add<int>("sample_times", 't',"the time of sampling", false,100);
     p.add<int>("width",'w',"width of the output image", false,720);
+    p.add<int>("batch",'b',"number of threads to be created to run, maximum: 1000",false,8); 
     p.parse_check(argc,argv);
+
+    const int BATCH = p.get<int>("batch");
 
     // Image info
     const auto aspect_ratio = 16.0/9.0;
@@ -47,7 +50,7 @@ int main(int argc, char *argv[])
     scene_init(scene_no, world_node, cam, aspect_ratio);
 
     // Render
-    std::counting_semaphore<BATCH> sem(BATCH);
+    std::counting_semaphore<1000> sem(BATCH);
     for(int i = image_height-1;i>=0;i--){
         sem.acquire();
         std::thread(scanline_render,i,std::ref(cam),std::ref(world_node),image_width,image_height,samples_per_pixel,max_depth,std::ref(image),std::ref(sem)).detach();
@@ -103,6 +106,13 @@ void scene_init(int scene, BVHNode& world, Camera& cam, const double aspect_rati
             lookat = Point3(0,0,0);
             vfov = 20.0;
             break;
+        case 3:
+            world = BVHNode(earth(),0,1);
+            lookfrom = Point3(13,2,3);
+            lookat = Point3(0,0,0);
+            vfov = 20.0;
+            break;
+
     }
     cam = Camera(lookfrom,lookat,vup,vfov,aspect_ratio,aperture,dist_to_focus,0.0,1.0);
 }

@@ -38,6 +38,8 @@ bool HittableList::bounding_box(double time0, double time1, AABB& output_box) co
     return true;
 }
 
+
+//Scenes
 HittableList random_scene(){
     HittableList world;
 
@@ -99,10 +101,18 @@ HittableList two_spheres(){
 HittableList two_perlin_spheres(){
     HittableList objects;
 
-    auto pertext = std::make_shared<NoiseTexture>();
+    auto pertext = std::make_shared<NoiseTexture>(4);
 
     objects.add(std::make_shared<Sphere>(Point3(0,-1000,0),1000,std::make_shared<Lambertian>(pertext)));
     objects.add(std::make_shared<Sphere>(Point3(0,2,0),2,std::make_shared<Lambertian>(pertext)));
 
     return objects;
+}
+
+HittableList earth(){
+    auto earth_texture = std::make_shared<ImageTexture>("resources/earthmap.jpg");
+    auto earth_surface = std::make_shared<Lambertian>(earth_texture);
+    auto globe = std::make_shared<Sphere>(Point3(0,0,0),2,earth_surface);
+
+    return HittableList(globe);
 }

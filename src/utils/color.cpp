@@ -61,7 +61,7 @@ void scanline_render(const int line,
                      const int samples_per_pixel,
                      const int max_depth,
                      std::vector<std::vector<std::vector<int>>>& image,
-                     std::counting_semaphore<BATCH>& sem){
+                     std::counting_semaphore<1000>& sem){
     for(int i = 0;i<image_width;i++){
         Color pixel_color(0,0,0);
         for(int j = 0;j<samples_per_pixel;j++){
