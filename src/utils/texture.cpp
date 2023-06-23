@@ -47,8 +47,11 @@ Color ImageTexture::value(double u, double v, const Vec3& p) const{
     // std::cerr<<"i: "<<i<<" j: "<<j<<std::endl;
 
     const auto color_scale = 1.0/255.0;
-    auto pixel = data + j*bytes_per_scanline + i*bytes_per_pixel;
 
-    return Color(color_scale* pixel[0], color_scale* pixel[1], color_scale * pixel[2]);
+    // auto pixel = data + j*bytes_per_scanline + i*bytes_per_pixel;
+
+    auto offset = j*bytes_per_scanline + i* bytes_per_pixel;
+
+    return Color(color_scale* data[offset], color_scale* data[offset+1], color_scale * data[offset+2]);
 
 }

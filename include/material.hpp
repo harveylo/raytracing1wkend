@@ -12,6 +12,10 @@ class Material{
 public:
     //pure virtual funciton
     virtual bool scatter(const Ray& ray_in, const HitRecord& rec, Color& attenuation, Ray& scattered) const = 0;
+
+    virtual Color emitted(double u, double v, const Point3& p) const{
+        return Color(0,0,0);
+    }
     virtual ~Material() = default;
 };
 
@@ -48,6 +52,25 @@ public:
     virtual ~Dielectric() = default;
 private:
     static double reflectance(double cosine, double ref_idx);
+};
+
+class DiffuseLight : public Material {
+public:
+    std::shared_ptr<Texture> emit;
+
+    DiffuseLight(std::shared_ptr<Texture> emit):emit(emit) {}
+    DiffuseLight(Color c) : emit(std::make_shared<SolidColor>(c)) {}
+
+    virtual bool scatter(const Ray& ray_in, const HitRecord& rec, Color& attenuation, Ray& scattered) const override{
+        // a light emission object will not scatter a ray
+        return false;
+    }
+
+    virtual Color emitted(double u, double v, const Point3& p) const override {
+        return emit -> value(u, v, p);
+    }
+
+    virtual ~DiffuseLight() = default;
 };
 
 
