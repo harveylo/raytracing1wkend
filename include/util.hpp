@@ -21,6 +21,7 @@
 // Constants
 const double INFIN_D = std::numeric_limits<double>::infinity();
 const double PI = 3.1415926535897932384626;
+constexpr unsigned int MAX_BATCH=1000;
 
 // Utility Functions
 inline double degrees_to_radians(double degrees){

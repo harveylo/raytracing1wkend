@@ -6,11 +6,16 @@
 
 static double perlin_interp(Vec3 c[2][2][2], double u, double v,
                                double w) {
+
+  // hermite cube to smoothe the interpolation
+  // can also use cosine like (1 - cos(t*pi)) / 2
+  // Ken Perlin suggest using y = 6*t^5 - 15*t^4 + 10*t^3
   auto uu = u*u*(3-2*u);
   auto vv = v*v*(3-2*v);
   auto ww = w*w*(3-2*w);
   auto accum = .0;
 
+  // interpolation
   for(int i = 0;i<2;i++){
     for(int j = 0;j<2;j++){
       for(int k = 0;k<2;k++){

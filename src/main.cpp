@@ -14,7 +14,7 @@
 #include <thread>
 #include <string>
 
-void scene_init(int scene, BVHNode& world, Camera& cam, const double aspect_ratio);
+void scene_init(int scene, BVHNode& world, Camera& cam, Color& background, const double aspect_ratio);
 
 
 int main(int argc, char *argv[])
@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
     p.add<int>("batch",'b',"number of threads to be created to run, maximum: 1000",false,8); 
     p.parse_check(argc,argv);
 
-    const int BATCH = p.get<int>("batch");
+    const int BATCH = p.get<int>("batch")<=MAX_BATCH?p.get<int>("batch"):MAX_BATCH;
 
     // Image info
     const auto aspect_ratio = 16.0/9.0;
@@ -41,19 +41,24 @@ int main(int argc, char *argv[])
     // How many times of reflection each ray can make
     const int max_depth = 50;
     std::vector<std::vector<std::vector<int>>> image(image_height,std::vector<std::vector<int>>(image_width,std::vector<int>(3,0)));
-    
-    BVHNode world_node ;
 
+    // Scene information   
+    BVHNode world_node ;
     Camera cam;
+    Color background;
 
     int scene_no = p.get<int>("scene");
-    scene_init(scene_no, world_node, cam, aspect_ratio);
+    scene_init(scene_no, world_node, cam, background,aspect_ratio);
 
     // Render
-    std::counting_semaphore<1000> sem(BATCH);
+    std::counting_semaphore<MAX_BATCH> sem(BATCH);
     for(int i = image_height-1;i>=0;i--){
         sem.acquire();
-        std::thread(scanline_render,i,std::ref(cam),std::ref(world_node),image_width,image_height,samples_per_pixel,max_depth,std::ref(image),std::ref(sem)).detach();
+        std::thread(
+            scanline_render,i,std::ref(cam),std::ref(world_node),
+            image_width,image_height,samples_per_pixel,max_depth,
+            std::ref(background),std::ref(image),std::ref(sem)
+        ).detach();
         std::cerr << "\rScanline: \e[44m" << i << "\e[0m " <<"submitted"<< std::flush;
     }
 
@@ -78,7 +83,7 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-void scene_init(int scene, BVHNode& world, Camera& cam, const double aspect_ratio){
+void scene_init(int scene, BVHNode& world, Camera& cam, Color& background, const double aspect_ratio){
     Point3 lookfrom;
     Point3 lookat;
     auto vfov = 40;
@@ -89,6 +94,7 @@ void scene_init(int scene, BVHNode& world, Camera& cam, const double aspect_rati
         default:
         case 0:
             world = BVHNode(random_scene(),0,1);
+            background = Color(0.7,0.8,1.00);
             lookfrom = Point3(13,2,3);
             lookat = Point3(0,0,0);
             vfov = 20.0;
@@ -96,21 +102,27 @@ void scene_init(int scene, BVHNode& world, Camera& cam, const double aspect_rati
             break;
         case 1:
             world = BVHNode(two_spheres(),0,1);
+            background = Color(0.7,0.8,1.00);
             lookfrom = Point3(13,2,3);
             lookat = Point3(0,0,0);
             vfov = 20.0;
             break;
         case 2:
             world = BVHNode(two_perlin_spheres(),0,1);
+            background = Color(0.7,0.8,1.00);
             lookfrom = Point3(13,2,3);
             lookat = Point3(0,0,0);
             vfov = 20.0;
             break;
         case 3:
             world = BVHNode(earth(),0,1);
+            background = Color(0.7,0.8,1.00);
             lookfrom = Point3(13,2,3);
             lookat = Point3(0,0,0);
             vfov = 20.0;
+            break;
+        case 4:
+            background = Color(0.0,0.0,0.0);
             break;
 
     }

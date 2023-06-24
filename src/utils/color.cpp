@@ -1,8 +1,10 @@
 #include "color.hpp"
 #include "bvh.hpp"
+#include "hittable.hpp"
 #include "util.hpp"
 #include "material.hpp"
 #include "camera.hpp"
+#include "vec3.hpp"
 
 // desolation simple one-sample write_color function 
 // void write_color(std::ostream &out, Color pixel_color){
@@ -35,22 +37,24 @@ void write_color(std::ostream &out, Color pixel_color, int samples_per_pixel){
         << static_cast<int>(256 * clamp(b, 0.0, 0.999)) << '\n';
 }
 
-Color ray_color(const Ray& r, const BVHNode& world, int depth) {
+Color ray_color(const Ray& r, const Color& background, const Hittable& world, int depth) {
     // If already reached the maximum depth, return no contribution color.
     if(depth <= 0) return Color(0,0,0);
     HitRecord rec;
-    if(world.hit(r,0.001,INFIN_D,rec)){
-        //calculate child ray according to material
-        Color attenuation;
-        Ray scattered;
-        if((rec.mat_ptr)->scatter(r,rec,attenuation,scattered)) 
-            return attenuation*(ray_color(scattered,world,depth-1));
-        return Color(0,0,0); 
-    }
-    // Return the linear blend of white and blue
-    Vec3 unit_direction = Vec3::unit_vector(r.direction());
-    auto t = 0.5*(unit_direction.y()+1.0);
-    return (1.0-t)*Color(1.0,1.0,1.0) + t*Color(0.5,0.7,1.0);
+
+    // if hits nothing, return background color
+    if(!world.hit(r, 0.001, INFIN_D, rec))
+        return background;
+    //calculate child ray according to material
+    Color attenuation;
+    Ray scattered;
+    Color emitted = rec.mat_ptr -> emitted(rec.u, rec.v, rec.p);
+
+    // if no scattered ray, return only the emitted ray color
+    if(!(rec.mat_ptr)->scatter(r,rec,attenuation,scattered)) 
+        return emitted;
+
+    return emitted + attenuation * ray_color(scattered, background, world, depth-1);
 }
 
 void scanline_render(const int line,
@@ -60,15 +64,16 @@ void scanline_render(const int line,
                      const int image_height,
                      const int samples_per_pixel,
                      const int max_depth,
+                     const Color& background,
                      std::vector<std::vector<std::vector<int>>>& image,
-                     std::counting_semaphore<1000>& sem){
+                     std::counting_semaphore<MAX_BATCH>& sem){
     for(int i = 0;i<image_width;i++){
         Color pixel_color(0,0,0);
         for(int j = 0;j<samples_per_pixel;j++){
             auto u = (i+random_double())/(image_width-1);
             auto v = (line+random_double())/(image_height-1);
             Ray r = cam.get_ray(u,v);
-            pixel_color += ray_color(r,world,max_depth);
+            pixel_color += ray_color(r,background,world,max_depth);
         }
 
         auto r = pixel_color.x();

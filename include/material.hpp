@@ -14,6 +14,7 @@ public:
     virtual bool scatter(const Ray& ray_in, const HitRecord& rec, Color& attenuation, Ray& scattered) const = 0;
 
     virtual Color emitted(double u, double v, const Point3& p) const{
+        // emit black light by default
         return Color(0,0,0);
     }
     virtual ~Material() = default;
