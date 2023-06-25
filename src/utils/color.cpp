@@ -51,7 +51,7 @@ Color ray_color(const Ray& r, const Color& background, const Hittable& world, in
     Color emitted = rec.mat_ptr -> emitted(rec.u, rec.v, rec.p);
 
     // if no scattered ray, return only the emitted ray color
-    if(!(rec.mat_ptr)->scatter(r,rec,attenuation,scattered)) 
+    if(!(rec.mat_ptr->scatter(r,rec,attenuation,scattered)))
         return emitted;
 
     return emitted + attenuation * ray_color(scattered, background, world, depth-1);

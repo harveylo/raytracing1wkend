@@ -31,5 +31,7 @@ HittableList random_scene();
 HittableList two_spheres();
 HittableList two_perlin_spheres();
 HittableList earth();
+HittableList simple_light();
+HittableList cornell_box();
 
 #endif
