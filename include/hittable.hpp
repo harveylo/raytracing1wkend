@@ -6,8 +6,10 @@
 #include "aabb.hpp"
 #include "vec3.hpp"
 
+
 class Material;
 class HittableList;
+class Texture;
 
 struct HitRecord {
     Point3 p;
@@ -163,5 +165,6 @@ public:
 
     virtual ~RotateY() = default;
 };
+
 
 #endif

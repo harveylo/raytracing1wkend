@@ -33,5 +33,7 @@ HittableList two_perlin_spheres();
 HittableList earth();
 HittableList simple_light();
 HittableList cornell_box();
+HittableList cornell_smoke();
+HittableList final_scene();
 
 #endif

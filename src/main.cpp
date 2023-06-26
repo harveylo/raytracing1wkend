@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
 
     // Handle cmdline arguments
     cmdline::parser p;
-    p.add<int>("scene", 's', "scene to render", false,0,cmdline::oneof<int>(0,1,2,3,4,5));
+    p.add<int>("scene", 's', "scene to render", false,0,cmdline::oneof<int>(0,1,2,3,4,5,6,7));
     p.add<int>("pixel_samples", 'p',"the number of sampling per pixel", false,100);
     p.add<int>("width",'w',"width of the output image", false,800);
     p.add<int>("batch",'b',"number of threads to be created to run, maximum: 1000",false,8); 
@@ -140,6 +140,20 @@ void scene_init(int scene, BVHNode& world, Camera& cam, Color& background, const
             world = BVHNode(cornell_box(),0,1);
             background = Color(0,0,0);
             lookfrom = Point3(278,278,-800);
+            lookat = Point3(278,278,0);
+            vfov = 40.0;
+            break;
+        case 6:
+            world = BVHNode(cornell_smoke(),0,1);
+            background = Color(0,0,0);
+            lookfrom = Point3(278,278,-800);
+            lookat = Point3(278,278,0);
+            vfov = 40.0;
+            break;
+        case 7:
+            world = BVHNode(final_scene(),0,1);
+            background = Color(0,0,0);
+            lookfrom = Point3(478,278,-600);
             lookat = Point3(278,278,0);
             vfov = 40.0;
             break;

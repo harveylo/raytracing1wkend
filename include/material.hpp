@@ -74,5 +74,20 @@ public:
     virtual ~DiffuseLight() = default;
 };
 
+class Isotropic : public Material {
+public:
+    std::shared_ptr<Texture> albedo;
 
+    Isotropic(Color c) : albedo(std::make_shared<SolidColor>(c)) {}
+    Isotropic(std::shared_ptr<Texture> a): albedo(a) {}
+
+    virtual bool scatter(const Ray& ray_in, const HitRecord& rec, Color& attenuation, Ray& scattered) const override{
+        // Scatter inside the volume is completely random in direction
+        scattered = Ray(rec.p,Vec3::random_in_unit_sphere(),ray_in.time);
+
+        attenuation = albedo -> value(rec.u, rec.v, rec.p);
+
+        return true;
+    }
+};
 #endif
