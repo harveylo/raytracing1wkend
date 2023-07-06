@@ -3,19 +3,20 @@
 #include "util.hpp"
 
 
-bool Lambertian::scatter(const Ray& ray_in, const HitRecord& rec, Color& attenuation, Ray& scattered) const{
+bool Lambertian::scatter(const Ray& ray_in, const HitRecord& rec, Color& attenuation, Ray& scattered, double& pdf) const{
         // Calculated the random point inside the unit sphere, Three ways to diffuse
         // Vec3 direction = Vec3::random_in_hemisphere(rec.normal); //uniform distribution, hemisphere
         // Vec3 direction = rec.normal + Vec3::random_in_unit_sphere(); // lazy hack, closer to normal
         Vec3 direction = rec.normal + Vec3::random_unit_vector(); // Lambertian Reflection, closer to scatter the ray
         if(direction.near_zero()) direction = rec.normal;
 
-        scattered = Ray(rec.p,direction,ray_in.time);
+        scattered = Ray(rec.p,Vec3::unit_vector(direction),ray_in.time);
         attenuation = albedo->value(rec.u, rec.v, rec.p);
+        pdf = rec.normal.dot(scattered.direction())/PI;
         return true;
 }
 
-bool Metal::scatter(const Ray& ray_in, const HitRecord& rec, Color& attenuation, Ray& scattered) const {
+bool Metal::scatter(const Ray& ray_in, const HitRecord& rec, Color& attenuation, Ray& scattered, double& pdf) const {
     Vec3 direction = Vec3::unit_vector(ray_in.direction().reflect(rec.normal))+(fuzz*Vec3::random_in_unit_sphere());
     
     if(direction.near_zero()) direction = rec.normal;
@@ -25,7 +26,7 @@ bool Metal::scatter(const Ray& ray_in, const HitRecord& rec, Color& attenuation,
     return true;
 }
 
-bool Dielectric::scatter(const Ray& ray_in, const HitRecord& rec, Color& attenuation, Ray& scattered) const{
+bool Dielectric::scatter(const Ray& ray_in, const HitRecord& rec, Color& attenuation, Ray& scattered,double& pdf) const{
     // The glass surface absorb nothing, always reflect or refract
     attenuation = Color(1.0,1.0,1.0);
 

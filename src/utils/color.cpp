@@ -49,12 +49,15 @@ Color ray_color(const Ray& r, const Color& background, const Hittable& world, in
     Color attenuation;
     Ray scattered;
     Color emitted = rec.mat_ptr -> emitted(rec.u, rec.v, rec.p);
+    double pdf;
+    Color albedo;
 
     // if no scattered ray, return only the emitted ray color
-    if(!(rec.mat_ptr->scatter(r,rec,attenuation,scattered)))
+    if(!(rec.mat_ptr->scatter(r,rec,attenuation,scattered,pdf)))
         return emitted;
 
-    return emitted + attenuation * ray_color(scattered, background, world, depth-1);
+    return emitted + attenuation * rec.mat_ptr->scattering_pdf(r, rec, scattered)
+            *ray_color(scattered, background, world, depth-1)/ pdf;
 }
 
 void scanline_render(const int line,

@@ -11,7 +11,15 @@
 class Material{
 public:
     //pure virtual funciton
-    virtual bool scatter(const Ray& ray_in, const HitRecord& rec, Color& attenuation, Ray& scattered) const = 0;
+    virtual bool scatter(const Ray& ray_in, const HitRecord& rec, Color& attenuation, Ray& scattered, double& pdf) const{
+        return false;
+    }
+
+    virtual double scattering_pdf(
+        const Ray& r_in, const HitRecord& rec, const Ray& scattered
+    )const{
+        return 0;
+    }
 
     virtual Color emitted(double u, double v, const Point3& p) const{
         // emit black light by default
@@ -28,7 +36,11 @@ public:
     // The fraction of sunlight that is fiffusely reflected by the body 
     Lambertian(const Color& a): albedo(std::make_shared<SolidColor>(a)){};
     Lambertian(std::shared_ptr<Texture> a): albedo(a){}
-    virtual bool scatter(const Ray& ray_in, const HitRecord& rec, Color& attenuation, Ray& scattered) const override;
+    virtual bool scatter(const Ray& ray_in, const HitRecord& rec, Color& attenuation, Ray& scattered, double& pdf) const override;
+    virtual double scattering_pdf(const Ray& r_in, const HitRecord& rec, const Ray& scattered) const override{
+        auto cosine = rec.normal.dot(Vec3::unit_vector(scattered.direction()));
+        return cosine <0 ? 0: cosine/PI;
+    }
     virtual ~Lambertian() = default;
     
 };
@@ -40,7 +52,7 @@ public:
     double fuzz;
     Metal(const Color& a): albedo(a),fuzz(0){};
     Metal(const Color&a, double f): albedo(a),fuzz(f){};
-    virtual bool scatter(const Ray& ray_in, const HitRecord& rec, Color& attenuation, Ray& scattered) const override;
+    virtual bool scatter(const Ray& ray_in, const HitRecord& rec, Color& attenuation, Ray& scattered, double& pdf) const override;
     virtual ~Metal() = default;
 };
 
@@ -49,7 +61,7 @@ public:
     double ir;
 
     Dielectric(double ir):ir(ir){}
-    virtual bool scatter(const Ray& ray_in, const HitRecord& rec, Color& attenuation, Ray& scattered) const override;
+    virtual bool scatter(const Ray& ray_in, const HitRecord& rec, Color& attenuation, Ray& scattered, double& pdf) const override;
     virtual ~Dielectric() = default;
 private:
     static double reflectance(double cosine, double ref_idx);
@@ -62,7 +74,7 @@ public:
     DiffuseLight(std::shared_ptr<Texture> emit):emit(emit) {}
     DiffuseLight(Color c) : emit(std::make_shared<SolidColor>(c)) {}
 
-    virtual bool scatter(const Ray& ray_in, const HitRecord& rec, Color& attenuation, Ray& scattered) const override{
+    virtual bool scatter(const Ray& ray_in, const HitRecord& rec, Color& attenuation, Ray& scattered, double& pdf) const override{
         // a light emission object will not scatter a ray
         return false;
     }
@@ -81,7 +93,7 @@ public:
     Isotropic(Color c) : albedo(std::make_shared<SolidColor>(c)) {}
     Isotropic(std::shared_ptr<Texture> a): albedo(a) {}
 
-    virtual bool scatter(const Ray& ray_in, const HitRecord& rec, Color& attenuation, Ray& scattered) const override{
+    virtual bool scatter(const Ray& ray_in, const HitRecord& rec, Color& attenuation, Ray& scattered, double& pdf) const override{
         // Scatter inside the volume is completely random in direction
         scattered = Ray(rec.p,Vec3::random_in_unit_sphere(),ray_in.time);
 
