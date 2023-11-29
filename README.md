@@ -1,7 +1,7 @@
 # Simple Ray Tracing Renderer
 This project is based on the [book series](https://raytracing.github.io/).
 
-All code has been copied and/or modified from the book. I have arranged it in a way that makes it more readable as a complete project.
+All codes are copied and/or modified from the book. I have arranged it in a way that makes it more readable as a complete project.
 # Multi-threads support
 Use command line parameter `-b` to set number of active threads.
 # Command line arguments
